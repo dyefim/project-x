@@ -1,16 +1,9 @@
-import { useState } from 'react'
 import type { NextPage } from 'next'
 import Head from 'next/head'
+import Body from './Body'
 import styles from '../styles/Home.module.css'
 
-import { Checkbox } from '@chakra-ui/react'
-
 const Home: NextPage = () => {
-  const [isChecked, setIsChecked] = useState(true)
-  const handleCheckboxChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setIsChecked(event.target.checked)
-  }
-
   return (
     <div className={styles.container}>
       <Head>
@@ -19,11 +12,7 @@ const Home: NextPage = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <main className={styles.main}>
-        <Checkbox checked={isChecked} onChange={handleCheckboxChange}>
-          {isChecked ? 'Un' : 'C'}heck me
-        </Checkbox>
-      </main>
+      <Body />
 
       <footer className={styles.footer}>
         <a
