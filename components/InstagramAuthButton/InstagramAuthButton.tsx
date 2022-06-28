@@ -1,50 +1,30 @@
-import { ReactNode, useEffect, useCallback } from 'react'
-
+import { useEffect, useCallback } from 'react'
+import { Props, ResolveValue } from './types'
 import { openPopupWindow } from 'utils/popupWindow'
 import URLParams from 'utils/urlParams'
 
-export interface Error {
-  error: string | null
-  error_reason: string | null
-  error_description?: string | null
-}
-
-interface Props {
-  clientId: string
-  children?: ReactNode
-  redirectUri?: string
-  useRedirect?: boolean
-  implicitAuth?: boolean
-  onFailure: (error: Error) => void
-  onSuccess: (response: string | null) => void
+const oAuthCancellationError = {
+  error: 'closed',
+  error_reason: 'oauth_canceled',
+  error_description: 'User canceled the authentication',
 }
 
 const InstagramAuthButton = ({
   clientId,
   children,
   redirectUri,
-  implicitAuth = false,
-  useRedirect = false,
   onFailure,
   onSuccess,
 }: Props) => {
   const checkInstagramAuthentication = useCallback(
     (context: Window) => {
-      const { location } = context
+      const searchParams = context.location.search
+      const params = URLParams(searchParams)
 
-      const params = URLParams(location.search)
-
-      if (implicitAuth) {
-        const [, matchedUrl] = location.hash.match(/=(.*)/) || []
-
-        if (matchedUrl) {
-          onSuccess(matchedUrl)
-          return true
-        }
-      } else if (location.search.includes('code')) {
+      if (searchParams.includes('code')) {
         onSuccess(params.get('code'))
         return true
-      } else if (location.search.includes('error')) {
+      } else if (searchParams.includes('error')) {
         onFailure({
           error: params.get('error'),
           error_reason: params.get('error_reason'),
@@ -55,21 +35,16 @@ const InstagramAuthButton = ({
 
       return false
     },
-    [implicitAuth, onFailure, onSuccess]
+    [onFailure, onSuccess]
   )
 
   const onCredentialsChanged = (
     popup: Window | null,
-    resolve?: (value: Record<string, unknown> | string) => void,
+    resolve?: (value: ResolveValue) => void,
     reject?: () => void
-  ): Promise<Record<string, unknown> | string> | void => {
-    const error = {
-      error: 'closed',
-      error_reason: 'oauth_canceled',
-      error_description: 'User canceled the authentication',
-    }
+  ): Promise<ResolveValue> | void => {
     if (popup == null) {
-      onFailure(error)
+      onFailure(oAuthCancellationError)
       return
     }
     if (!resolve) {
@@ -85,21 +60,14 @@ const InstagramAuthButton = ({
     if (isFinished) {
       popup.close()
     } else if (popup.closed) {
-      onFailure(error)
+      onFailure(oAuthCancellationError)
     } else {
-      setTimeout(() => onCredentialsChanged(popup, resolve, reject), 0)
+      setTimeout(() => onCredentialsChanged(popup, resolve, reject), 1000)
     }
   }
 
-  const oAuthSignIn = ({
-    url,
-    tab = false,
-  }: {
-    url: string
-    tab?: boolean
-  }) => {
-    const name = tab ? '_blank' : 'instagram'
-    const popup = openPopupWindow({ url, name })
+  const oAuthSignIn = (url: string) => {
+    const popup = openPopupWindow(url)
     onCredentialsChanged(popup)
   }
 
@@ -107,17 +75,13 @@ const InstagramAuthButton = ({
     const stringParams = URLParams({
       client_id: clientId,
       redirect_uri: redirectUri || window.location.href,
-      response_type: implicitAuth ? 'token' : 'code',
+      response_type: 'code',
       scope: 'user_profile,user_media',
     }).toString()
 
     const url = `https://api.instagram.com/oauth/authorize?${stringParams}`
 
-    if (useRedirect) {
-      window.location.href = url
-    } else {
-      oAuthSignIn({ url })
-    }
+    oAuthSignIn(url)
   }
 
   useEffect(() => {

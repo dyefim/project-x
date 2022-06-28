@@ -24,17 +24,11 @@ const getPopupDimensions = ({ width, height }: Dimensions) => {
   return `width=${width},height=${height},top=${top},left=${left}`
 }
 
-export const openPopupWindow = ({
-  url,
-  name,
-}: {
-  url: string
-  name: string
-}) => {
+export const openPopupWindow = (url: string) => {
   const dimensions = getPopupDimensions({
     width: WIDTH,
     height: HEIGHT,
   })
 
-  return window.open(url, name, `${POPUP_WINDOW_SETTINGS},${dimensions}`)
+  return window.open(url, 'instagram', `${POPUP_WINDOW_SETTINGS},${dimensions}`)
 }
