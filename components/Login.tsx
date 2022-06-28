@@ -9,13 +9,11 @@ interface Props {
 }
 
 const clientId = process.env.NEXT_PUBLIC_INSTAGRAM_CLIENT_ID || ''
-const authRedirectUri = process.env.NEXT_PUBLIC_INSTAGRAM_AUTH_REDIRECT_URI
 
 const Login = (props: Props) => {
   return (
     <InstagramAuthButton
       clientId={clientId}
-      redirectUri={authRedirectUri}
       onSuccess={props.onSuccess}
       onFailure={(e) => {
         console.log(e)
