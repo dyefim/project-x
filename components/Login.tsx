@@ -5,7 +5,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faInstagram } from '@fortawesome/free-brands-svg-icons'
 
 interface Props {
-  onSuccess: () => void
+  onSuccess: (token: string | null) => void
 }
 
 const clientId = process.env.NEXT_PUBLIC_INSTAGRAM_CLIENT_ID || ''
@@ -16,7 +16,7 @@ const Login = (props: Props) => {
       clientId={clientId}
       onSuccess={props.onSuccess}
       onFailure={(e) => {
-        console.log(e)
+        console.error(e)
       }}
     >
       <Button
