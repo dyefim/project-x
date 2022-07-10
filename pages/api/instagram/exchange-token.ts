@@ -2,6 +2,7 @@ import type { NextApiRequest, NextApiResponse } from 'next'
 import axios from 'axios'
 import { FormDataService } from 'services'
 import URLParams from 'utils/urlParams'
+import respondWithError from '../respondWithError'
 
 type Data = {
   name: string
@@ -29,15 +30,19 @@ export default async function handler(
 
   const stringParams = URLParams(params).toString()
 
-  const response = await axios.post(
-    `https://api.instagram.com/oauth/access_token?${stringParams}`,
-    formData,
-    {
-      headers: {
-        ...formData.getHeaders(),
-      },
-    }
-  )
+  try {
+    const response = await axios.post(
+      `https://api.instagram.com/oauth/access_token?${stringParams}`,
+      formData,
+      {
+        headers: {
+          ...formData.getHeaders(),
+        },
+      }
+    )
 
-  res.status(200).send(response.data)
+    res.status(200).send(response.data)
+  } catch (error) {
+    respondWithError(res, error)
+  }
 }

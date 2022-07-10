@@ -5,6 +5,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faInstagram } from '@fortawesome/free-brands-svg-icons'
 
 interface Props {
+  buttonLabel?: string
   onSuccess: (token: string | null) => void
 }
 
@@ -23,7 +24,7 @@ const Login = (props: Props) => {
         colorScheme="pink"
         leftIcon={<FontAwesomeIcon icon={faInstagram} />}
       >
-        Login with Instagram
+        {props.buttonLabel || 'Login with Instagram'}
       </Button>
     </InstagramAuthButton>
   )

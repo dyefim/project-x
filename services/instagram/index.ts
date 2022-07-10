@@ -1,8 +1,15 @@
 import axios from 'axios'
+import Cookies from 'js-cookie'
+
+export const storeInstagramToken = (token: string) => {
+  Cookies.set('instagramToken', token, {
+    expires: 1,
+  })
+}
 
 interface ExchangeTokenResponse {
   access_token: string
-  user_id: number
+  user_id: string
 }
 
 export const exchangeCodeForToken = async (code: string | null) => {
@@ -13,7 +20,7 @@ export const exchangeCodeForToken = async (code: string | null) => {
     }
   )
 
-  return response.data.access_token
+  return response.data
 }
 
 interface InstagramUserInfo {
