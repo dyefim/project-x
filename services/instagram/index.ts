@@ -7,6 +7,10 @@ export const storeInstagramToken = (token: string) => {
   })
 }
 
+export const removeInstagramToken = () => {
+  Cookies.remove('instagramToken')
+}
+
 interface ExchangeTokenResponse {
   access_token: string
   user_id: string

@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { Avatar, Box, Divider, Stack, Text } from '@chakra-ui/react'
+import { Avatar, Box, Button, Divider, Stack, Text } from '@chakra-ui/react'
 import Cookies from 'js-cookie'
 import { InstagramService } from 'services'
 import Login from 'components/Login'
@@ -38,10 +38,21 @@ const AuthPage = () => {
     }
   }
 
+  const handleLogout = () => {
+    InstagramService.removeInstagramToken()
+    setUserName('')
+  }
+
   return (
     <main className={styles.main}>
-      <Login onSuccess={getUser} buttonLabel={isFailed ? 'Try again' : ''} />
-
+      <Stack>
+        <Login onSuccess={getUser} buttonLabel={isFailed ? 'Try again' : ''} />
+        {userName && (
+          <Button variant="outline" colorScheme="red" onClick={handleLogout}>
+            Log Out from Instagram
+          </Button>
+        )}
+      </Stack>
       {userName && (
         <>
           <Box borderWidth="1px" borderRadius="lg" padding="4" margin="4">
