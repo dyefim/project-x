@@ -1,18 +1,10 @@
-import { Button } from '@chakra-ui/react'
-import { InstagramAuthorizationWindowURL } from '../constants/URLs'
-
 import styles from '../styles/Home.module.css'
+import Link from 'next/link'
 
 const Body = () => {
   return (
     <main className={styles.main}>
-      <form
-        name="instagram-auth-form"
-        action={InstagramAuthorizationWindowURL}
-        method="post"
-      >
-        <Button type="submit">Submit</Button>
-      </form>
+      <Link href="/auth">Go to Auth page</Link>
     </main>
   )
 }
